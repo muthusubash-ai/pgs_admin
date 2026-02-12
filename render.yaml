@@ -1,0 +1,24 @@
+databases:
+  - name: pavishna-db
+    databaseName: pavishna_global
+    user: pavishna
+    plan: free
+
+services:
+  - type: web
+    name: pavishna-global-service
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 120
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pavishna-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_DEBUG
+        value: false
+      - key: PYTHON_VERSION
+        value: 3.11.0
